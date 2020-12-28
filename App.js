@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation'; 
 import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 
 const Logo = () => {
@@ -54,7 +56,7 @@ const DetalleScreen = ({navigation}) => {
     </View>
   )
 }
-DetalleScreen.navigationOptions = ({ navigation, navigationOptions }) => {
+DetalleScreen.navigationOptions = ({ navigation }) => {
   return {
     title: navigation.getParam('title', 'Cargando...'),
     headerRight: (
@@ -64,13 +66,10 @@ DetalleScreen.navigationOptions = ({ navigation, navigationOptions }) => {
         color='#555'
       />
     ),
-    headerStyle: {
-      backgroundColor: navigationOptions.headerStyle.backgroundColor
-    }
   }
 }
 
-const AppNavigator = createStackNavigator({
+const AppNavigator = createBottomTabNavigator({
   Home: {
     screen: HomeScreen
   },
@@ -78,16 +77,28 @@ const AppNavigator = createStackNavigator({
     screen: DetalleScreen
   }
 }, { initialRouteName: 'Home',
-  defaultNavigationOptions: {
-    headerStyle: {
-    backgroundColor: '#fec'
-  },
-  headerTintColor: '#222',
-  headerTitleStyle: {
-    fontWeight: '100',
-    letterSpacing: 5
-  }
-  }
+  defaultNavigationOptions: ({ navigation }) => ({
+    tabBarIcon: ({ focused, horizontal, tintColor}) => {
+      const {routeName } = navigation.state
+      let iconName
+      if(routeName === 'Home'){
+        iconName = `ios-information-circle${focused ? '' : '-outline'}`
+      }else{
+        iconName = 'ios-options'
+      }
+      return <Ionicons name={iconName} size={20} tintColor={tintColor}/>
+    },
+      tabBarOptions: {
+      activeTintColor: navigation.state.routeName == 'Home' ? '#e91e63' : 'orange',
+      inactiveTintColor: 'black',
+      labelStyle:{
+        fontSize: 16,
+      },
+      style: {
+        backgroundColor: '#fec',
+      }
+    }
+  })
 })
 
 const RootStack = createStackNavigator({
