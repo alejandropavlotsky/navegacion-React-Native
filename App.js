@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation'; 
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -26,6 +26,9 @@ const HomeScreen = ({navigation}) => {
 
 HomeScreen.navigationOptions = {
   headerTitle: () => <Logo/>,
+  headerStyle: {
+    backgroundColor : '#f00'
+  }
 }
 
 
@@ -33,12 +36,19 @@ HomeScreen.navigationOptions = {
 
 
 const DetalleScreen = ({navigation}) => {
+  const [cont, setCont ] = useState(0)
+  const incrementar = () => setCont(cont + 1)
+
+  useEffect(() => {
+    navigation.setParams({ incrementar })
+  }, [cont]);
+
   const lala = navigation.getParam('lala', 'valor por defecto')
   return (
     <View style={styles.container}>
-      <Text>Soy la pantalla de detalle {lala}</Text>
+      <Text>Soy la pantalla de detalle {cont}</Text>
       <Button title="Volver"
-        onPress={() => navigation.setParams({ title: 'Usuario 1'})}
+        onPress={() => navigation.navigate('MiModal')}
       />
       <StatusBar style="auto" />
     </View>
@@ -47,6 +57,13 @@ const DetalleScreen = ({navigation}) => {
 DetalleScreen.navigationOptions = ({ navigation, navigationOptions }) => {
   return {
     title: navigation.getParam('title', 'Cargando...'),
+    headerRight: (
+      <Button
+        onPress={navigation.getParam('incrementar')}
+        title='Mas 1'
+        color='#555'
+      />
+    ),
     headerStyle: {
       backgroundColor: navigationOptions.headerStyle.backgroundColor
     }
@@ -73,7 +90,15 @@ const AppNavigator = createStackNavigator({
   }
 })
 
-export default createAppContainer(AppNavigator)
+const RootStack = createStackNavigator({
+  Main: AppNavigator,
+  MiModal: () => <Text>lalalalalala</Text>
+},{
+  mode: 'modal',
+  headerMode: 'none'
+})
+
+export default createAppContainer(RootStack)
 
 const styles = StyleSheet.create({
   container: {
