@@ -2,10 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
-import { createAppContainer } from 'react-navigation'; 
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'; 
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 const Logo = () => {
   return (
@@ -19,7 +19,7 @@ const HomeScreen = ({navigation}) => {
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <Button title="Ir a detalle"
-        onPress={() => navigation.navigate('Detalle', {id: '2'})}
+        onPress={() => navigation.navigate('Detalle')}
       />
       <StatusBar style="auto" />
     </View>
@@ -27,6 +27,9 @@ const HomeScreen = ({navigation}) => {
 }
 
 HomeScreen.navigationOptions = {
+  drawerIcon: ({ tintColor }) => {
+    return <Ionicons name='ios-information-circle' size={25} color={tintColor}/>
+  },
   headerTitle: () => <Logo/>,
   headerStyle: {
     backgroundColor : '#f00'
@@ -69,7 +72,7 @@ DetalleScreen.navigationOptions = ({ navigation }) => {
   }
 }
 
-const AppNavigator = createBottomTabNavigator({
+const AppNavigator = createSwitchNavigator({
   Home: {
     screen: HomeScreen
   },
@@ -77,28 +80,7 @@ const AppNavigator = createBottomTabNavigator({
     screen: DetalleScreen
   }
 }, { initialRouteName: 'Home',
-  defaultNavigationOptions: ({ navigation }) => ({
-    tabBarIcon: ({ focused, horizontal, tintColor}) => {
-      const {routeName } = navigation.state
-      let iconName
-      if(routeName === 'Home'){
-        iconName = `ios-information-circle${focused ? '' : '-outline'}`
-      }else{
-        iconName = 'ios-options'
-      }
-      return <Ionicons name={iconName} size={20} tintColor={tintColor}/>
-    },
-      tabBarOptions: {
-      activeTintColor: navigation.state.routeName == 'Home' ? '#e91e63' : 'orange',
-      inactiveTintColor: 'black',
-      labelStyle:{
-        fontSize: 16,
-      },
-      style: {
-        backgroundColor: '#fec',
-      }
-    }
-  })
+  
 })
 
 const RootStack = createStackNavigator({
